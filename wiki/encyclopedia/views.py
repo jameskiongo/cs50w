@@ -1,3 +1,5 @@
+import random
+
 import markdown
 from django import forms
 from django.shortcuts import render
@@ -71,10 +73,53 @@ def save_content(request):
                 "encyclopedia/error.html",
                 {"message": "content already exists"},
             )
-        else:
-            util.save_entry(title, content)
-            return render(
-                request,
-                "encyclopedia/entry_page.html",
-                {"title": title, "content": content},
-            )
+    util.save_entry(title, content)
+    return render(
+        request,
+        "encyclopedia/entry_page.html",
+        {"title": title, "content": content},
+    )
+
+
+def edit_content(request):
+    if request.method == "POST":
+        title = request.POST["entry_title"]
+        content = util.get_entry(title)
+        return render(
+            request,
+            "encyclopedia/edit_page.html",
+            {
+                "title": title,
+                "content": content,
+            },
+        )
+
+
+def save_edit(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        content = request.POST["content"]
+        util.save_entry(title, content)
+        html_content = convert_md(title)
+        return render(
+            request,
+            "encyclopedia/entry_page.html",
+            {
+                "title": title,
+                "content": html_content,
+            },
+        )
+
+
+def random_page(request):
+    pages = util.list_entries()
+    random_title = random.choice(pages)
+    content = convert_md(random_title)
+    return render(
+        request,
+        "encyclopedia/entry_page.html",
+        {
+            "title": random_title,
+            "content": content,
+        },
+    )
