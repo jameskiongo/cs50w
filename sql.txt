@@ -1,0 +1,43 @@
+creating table in sqlite
+
+CREATE TABLE flights(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  origin TEXT NOT NULL,
+  destination TEXT NOT NULL,
+  duration INTEGER NOT NULL
+)
+constraints
+CHECK
+DEFAULT
+NOT NULL
+
+insert data into table
+
+INSERT INTO flights
+  (origin, destination, duration)
+  VALUES ("New York", "London", 415)
+
+SELECT(retrieve data from data)
+SELECT * FROM flights;(select all from table)
+SELECT origin, destination FROM flights;
+SELECT * FROM flights WHERE id = 3;(select only row 3)
+SELECT * FROM flights WHERE origin = "New York"
+SELECT * FROM flights where duration > 500; 
+
+UPDATE fligts
+  SET duration = 430
+  WHERE origin = "New York"
+  AND destination = "London"
+
+
+DELETE FROM flights WHERE destination = "tokyo"
+JOIN syntax: join multiple tables together
+SELECT first, origin, destination
+  FROM flights JOIN passengers
+ON passengers.flight_id = flights_id;
+CREATE INDEX : makes quering more efficient
+CREATE INDEX name_index ON passengers (last);
+SQL injection : 
+Race Condition: 
+DJANGO MODELS
+
