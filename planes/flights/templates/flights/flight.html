@@ -12,4 +12,23 @@
             Duration: {{ flight.duration }}
         </ol>
     </ul>
+    <h2>Passengers</h2>
+    <ul>
+      {% for passenger in passengers %}
+      <li>{{passenger}}</li>
+      {% empty %}
+      <li>No Passengers</li>
+      {% endfor %}
+    </ul>
+    <h2>Add Passenger</h2>
+    <form action="{% url 'book' flight.id %}" method="post">
+      {% csrf_token %}
+      <select name="passenger">
+        {% for passenger in non_passengers %}
+          <option value="{{passenger.id}}">{{passenger}}</option>
+        {% endfor %}
+      </select>
+      <input type="submit">
+    </form>
+    <a href="{% url 'index' %}">Flight List</a>
 {% endblock %}
