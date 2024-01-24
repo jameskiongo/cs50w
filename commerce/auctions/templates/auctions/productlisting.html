@@ -1,0 +1,57 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+<div class="container mt-5">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="{{listing.imageURL}}" class="img-fluid rounded-start" alt="{{listing.title}}">
+    </div>
+    <div class="col-md-8 d-flex align-items-center">
+      <div class="card-body">
+        <h5 class="card-title">{{listing.title}}</h5>
+        <p class="card-text">{{listing.description}}</p>
+        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+        <p>Price: ${{listing.price}}</p>
+        <p>Owner: {{listing.owner}}</p>
+        {% if user.is_authenticated%}
+        {% if isListingInWatchlist%}
+        <form action="{% url 'removeWatchlist' id=listing.id%}" method="post">
+          {% csrf_token %} 
+          <button type="submit" class="btn btn-danger">Remove from Watchlist</button>
+        </form>
+        {% else %}
+        <form action="{% url 'addWatchlist' id=listing.id%}" method="post">
+          {% csrf_token %} 
+          <button type="submit" class="btn btn-success">Add to Watchlist</button>
+        </form>
+        {% endif %}
+        {%endif%}
+        <!-- <div class="row mx-3"> -->
+      </div>
+    </div>
+  </div>
+  {% if user.is_authenticated %}
+  <div class="mt-4">
+    <h4>Comments</h4>
+    <!-- Form for adding comments -->
+    <form action="{% url 'addComment' id=listing.id %}" method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="comment">Add a comment:</label>
+        <textarea class="form-control" name="newComment" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn btn-outline-primary">Submit Comment</button>
+    </form>
+    {%endif%}
+    <div class="mt-3">
+      {% for comment in comments %}
+      <div class="card mb-2">
+        <div class="card-body">
+          <p class="card-text">{{ comment.message }}</p>
+          <p class="card-text"><small class="text-muted">Posted by {{ comment.author}}</small></p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

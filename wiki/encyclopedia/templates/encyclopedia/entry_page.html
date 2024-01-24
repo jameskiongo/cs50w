@@ -2,7 +2,7 @@
 {% block body %}
 <p>{{ content | safe }}</p>
 <form action = "{% url 'edit_content' %}" method = "POST">
-   {% csrf_token %}
+  {% csrf_token %}
   <input type = "hidden" name="entry_title" value="{{title}}">
   <input type = "submit" value = "Edit" class = "btn btn-danger">
 </form>
