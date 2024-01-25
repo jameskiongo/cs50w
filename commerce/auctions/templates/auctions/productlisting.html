@@ -1,6 +1,18 @@
 {% extends "auctions/layout.html" %}
 {% block body %}
     <div class="container mt-5">
+        {% if message %}
+            {% if update %}
+                <div class="alert alert-success" role="alert">{{ message }}</div>
+            {% else %}
+                <div class="alert alert-danger" role="alert">{{ message }}</div>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% if not listing.isActive and user == listing.price.user %}
+        <div class="alert alert-success" role="alert">Congrats, You won the auction</div>
+    {% endif %}
+    <div class="container mt-5">
         <div class="row g-0">
             <div class="col-md-4">
                 <img src="{{ listing.imageURL }}"
@@ -11,12 +23,17 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ listing.title }}</h5>
                     <p class="card-text">{{ listing.description }}</p>
-                    <p class="card-text">
-                        <small class="text-muted">Last updated 3 mins ago</small>
-                    </p>
                     <p>Price: ${{ listing.price.bid }}</p>
                     <p>Owner: {{ listing.owner }}</p>
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and listing.isActive %}
+                        {% if isOwner %}
+                            <form action="{% url 'closeAuction' id=listing.id %}"
+                                  method="post"
+                                  class="my-3">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Close Auction</button>
+                            </form>
+                        {% endif %}
                         {% if isListingInWatchlist %}
                             <form action="{% url 'removeWatchlist' id=listing.id %}" method="post">
                                 {% csrf_token %}
@@ -29,7 +46,21 @@
                             </form>
                         {% endif %}
                     {% endif %}
-                    <!-- <div class="row mx-3">--></div>
+                    {% if user.is_authenticated %}
+                        <form action="{% url 'addBid' id=listing.id %}" method="post">
+                            {% csrf_token %}
+                            <div class = "mb-3">
+                                <!-- <label for="newBid">Bid</label> -->
+                                <input type="number"
+                                       min="0"
+                                       class="form-control my-3"
+                                       name="newBid"
+                                       placeholder="Add new Bid">
+                            </div>
+                            <button type="submit" class="btn btn-outline-success">Bid</button>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
         </div>
         {% if user.is_authenticated %}

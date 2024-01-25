@@ -20,6 +20,65 @@ def index(request):
     )
 
 
+def closeAuction(request, id):
+    listingData = Listing.objects.get(pk=id)
+    listingData.isActive = False
+    isListingInWatchlist = request.user in listingData.watchlist.all()
+    allComments = Comment.objects.filter(listing=listingData)
+    isOwner = request.user.username == listingData.owner.username
+    listingData.save()
+    return render(
+        request,
+        "auctions/productlisting.html",
+        {
+            "listing": listingData,
+            "isOwner": isOwner,
+            "update": True,
+            "message": "Congratulations! You Auction is closed",
+            "comments": allComments,
+            "isListingInWatchlist": isListingInWatchlist,
+        },
+    )
+
+
+def addBid(request, id):
+    newBid = request.POST["newBid"]
+    listingData = Listing.objects.get(pk=id)
+    isListingInWatchlist = request.user in listingData.watchlist.all()
+    allComments = Comment.objects.filter(listing=listingData)
+    isOwner = request.user.username == listingData.owner.username
+    if int(newBid) > listingData.price.bid:
+        updateBid = Bid(user=request.user, bid=int(newBid))
+        updateBid.save()
+        listingData.price = updateBid
+        listingData.save()
+        return render(
+            request,
+            "auctions/productlisting.html",
+            {
+                "listing": listingData,
+                "message": "Bid updated successfully",
+                "update": True,
+                "comments": allComments,
+                "isListingInWatchlist": isListingInWatchlist,
+                "isOwner": isOwner,
+            },
+        )
+    else:
+        return render(
+            request,
+            "auctions/productlisting.html",
+            {
+                "listing": listingData,
+                "message": "Bid Failed",
+                "update": False,
+                "comments": allComments,
+                "isListingInWatchlist": isListingInWatchlist,
+                "isOwner": isOwner,
+            },
+        )
+
+
 def displayCategory(request):
     if request.method == "POST":
         categoryFromForm = request.POST["category"]
@@ -61,6 +120,7 @@ def productlisting(request, listing_id):
     listing = Listing.objects.get(id=listing_id)
     isListingInWatchlist = request.user in listing.watchlist.all()
     allComments = Comment.objects.filter(listing=listing)
+    isOwner = request.user.username == listing.owner.username
     return render(
         request,
         "auctions/productlisting.html",
@@ -68,6 +128,7 @@ def productlisting(request, listing_id):
             "listing": listing,
             "isListingInWatchlist": isListingInWatchlist,
             "comments": allComments,
+            "isOwner": isOwner,
         },
     )
 
