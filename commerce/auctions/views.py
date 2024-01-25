@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import Category, Comment, Listing, User
+from .models import Bid, Category, Comment, Listing, User
 
 
 def index(request):
@@ -116,11 +116,13 @@ def createListing(request):
         category = request.POST["category"]
         currentUser = request.user
         categoryData = Category.objects.get(categoryName=category)
+        bid = Bid(bid=float(price), user=currentUser)
+        bid.save()
         newListing = Listing(
             title=title,
             description=description,
             imageURL=imageurl,
-            price=float(price),
+            price=bid,
             category=categoryData,
             owner=currentUser,
         )

@@ -13,30 +13,20 @@ class Category(models.Model):
         return self.categoryName
 
 
-<<<<<<< HEAD
-=======
 class Bid(models.Model):
     bid = models.FloatField(default=0)
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, blank=True, null=True, related_name="userbid"
+        User, on_delete=models.CASCADE, blank=True, null=True, related_name="userBid"
     )
 
-    def __str__(self):
-        return self.bid
 
-
->>>>>>> refs/remotes/origin/main
 class Listing(models.Model):
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=300)
     imageURL = models.CharField(max_length=1000)
-<<<<<<< HEAD
-    price = models.FloatField()
-=======
     price = models.ForeignKey(
-        Bid, on_delete=models.CASCADE, blank=True, null=True, related_name="bid"
+        Bid, on_delete=models.CASCADE, blank=True, null=True, related_name="bidPrice"
     )
->>>>>>> refs/remotes/origin/main
     isActive = models.BooleanField(default=True)
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, null=True, related_name="user"
