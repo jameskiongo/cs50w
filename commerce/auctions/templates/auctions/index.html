@@ -18,7 +18,7 @@
                              class="card-img-top">
                         <div class="card-body">
                             <h5 class="card-title">{{ listing.title }}</h5>
-                            <p class="card-text">Price: ${{ listing.price }}</p>
+                            <p class="card-text">Price: ${{ listing.price.bid }}</p>
                             <p class="card-text">{{ listing.description }}</p>
                             <a class="btn btn-primary" href="{% url 'productlisting' listing.id %}">See Details</a>
                         </div>
@@ -28,4 +28,3 @@
         </div>
     </div>
 {% endblock %}
-

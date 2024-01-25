@@ -1,22 +1,24 @@
 {% extends "auctions/layout.html" %}
 {% block body %}
-<h2>Watch Listings</h2>
-<div class="container mt-5">
-  <!-- Listing Cards -->
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for listing in listings %}
-    <div class="col">
-      <div class="card">
-        <img src="{{ listing.imageURL }}" alt="{{ listing.title}}" class="card-img-top">
-        <div class="card-body">
-          <h5 class="card-title">{{ listing.title}}</h5>
-          <p class="card-text">Price: ${{ listing.price }}</p>
-          <p class="card-text">{{ listing.description }}</p>
-          <a href="#" class="btn btn-primary">See Details</a>
+    <h2>Watch Listings</h2>
+    <div class="container mt-5">
+        <!-- Listing Cards -->
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for listing in listings %}
+                <div class="col">
+                    <div class="card">
+                        <img src="{{ listing.imageURL }}"
+                             alt="{{ listing.title }}"
+                             class="card-img-top">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text">Price: ${{ listing.price.bid }}</p>
+                            <p class="card-text">{{ listing.description }}</p>
+                            <a href="#" class="btn btn-primary">See Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-      </div>
     </div>
-    {% endfor %}
-  </div>
-</div>
 {% endblock %}

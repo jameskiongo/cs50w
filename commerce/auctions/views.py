@@ -116,7 +116,7 @@ def createListing(request):
         category = request.POST["category"]
         currentUser = request.user
         categoryData = Category.objects.get(categoryName=category)
-        bid = Bid(bid=float(price), user=currentUser)
+        bid = Bid(bid=int(price), user=currentUser)
         bid.save()
         newListing = Listing(
             title=title,
