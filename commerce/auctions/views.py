@@ -4,11 +4,128 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import Category, Comment, Listing, User
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    activeListings = Listing.objects.filter(isActive=True)
+    allCategories = Category.objects.all()
+    return render(
+        request,
+        "auctions/index.html",
+        {
+            "listings": activeListings,
+            "categories": allCategories,
+        },
+    )
+
+
+def displayCategory(request):
+    if request.method == "POST":
+        categoryFromForm = request.POST["category"]
+        category = Category.objects.get(categoryName=categoryFromForm)
+        activeListings = Listing.objects.filter(isActive=True, category=category)
+        allCategories = Category.objects.all()
+        return render(
+            request,
+            "auctions/index.html",
+            {
+                "listings": activeListings,
+                "categories": allCategories,
+            },
+        )
+
+
+def addComment(request, id):
+    currentUser = request.user
+    listingData = Listing.objects.get(pk=id)
+    message = request.POST["newComment"]
+    newComment = Comment(author=currentUser, listing=listingData, message=message)
+    newComment.save()
+    return HttpResponseRedirect(reverse("productlisting", args=(id,)))
+
+
+def mylistings(request):
+    currentUser = request.user
+    listings = Listing.objects.filter(isActive=True, owner=currentUser)
+    return render(
+        request,
+        "auctions/mylistings.html",
+        {
+            "listings": listings,
+        },
+    )
+
+
+def productlisting(request, listing_id):
+    listing = Listing.objects.get(id=listing_id)
+    isListingInWatchlist = request.user in listing.watchlist.all()
+    allComments = Comment.objects.filter(listing=listing)
+    return render(
+        request,
+        "auctions/productlisting.html",
+        {
+            "listing": listing,
+            "isListingInWatchlist": isListingInWatchlist,
+            "comments": allComments,
+        },
+    )
+
+
+def watchlist(request):
+    currentUser = request.user
+    listings = currentUser.listingwatchlist.all()
+    return render(
+        request,
+        "auctions/watchlist.html",
+        {
+            "listings": listings,
+        },
+    )
+
+
+def removeWatchlist(request, id):
+    listingData = Listing.objects.get(pk=id)
+    currentUser = request.user
+    listingData.watchlist.remove(currentUser)
+    return HttpResponseRedirect(reverse("productlisting", args=(id,)))
+
+
+def addWatchlist(request, id):
+    listingData = Listing.objects.get(pk=id)
+    currentUser = request.user
+    listingData.watchlist.add(currentUser)
+    return HttpResponseRedirect(reverse("productlisting", args=(id,)))
+
+
+def createListing(request):
+    if request.method == "GET":
+        allCategories = Category.objects.all()
+        return render(
+            request,
+            "auctions/create.html",
+            {
+                "categories": allCategories,
+            },
+        )
+    else:
+        title = request.POST["title"]
+        description = request.POST["description"]
+        imageurl = request.POST["imageurl"]
+        price = request.POST["price"]
+        category = request.POST["category"]
+        currentUser = request.user
+        categoryData = Category.objects.get(categoryName=category)
+        newListing = Listing(
+            title=title,
+            description=description,
+            imageURL=imageurl,
+            price=float(price),
+            category=categoryData,
+            owner=currentUser,
+        )
+        newListing.save()
+        return HttpResponseRedirect(reverse(index))
 
 
 def login_view(request):

@@ -1,0 +1,49 @@
+{% extends "auctions/layout.html" %}
+{% block body %}
+    <form action="{% url 'create' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="exampleInputEmail1">Enter Title</label>
+            <input type="text"
+                   name="title"
+                   class="form-control"
+                   id="title"
+                   aria-describedby="title"
+                   placeholder="Title">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text"
+                   class="form-control"
+                   name="description"
+                   id="description"
+                   aria-describedby="description"
+                   placeholder="Description">
+        </div>
+        <div class="form-group">
+            <label for="imageUrl">Image Url</label>
+            <input type="text"
+                   class="form-control"
+                   id="imageurl"
+                   aria-describedby="imageUrl"
+                   placeholder="Image Url"
+                   name="imageurl">
+        </div>
+        <div class="form-group">
+            <label for="price">Price</label>
+            <input type="number"
+                   class="form-control"
+                   id="price"
+                   aria-describedby="price"
+                   placeholder="Price"
+                   name="price">
+        </div>
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select name="category" id="category">
+                {% for cat in categories %}<option value="{{ cat }}">{{ cat }}</option>{% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Create</button>
+    </form>
+{% endblock %}
