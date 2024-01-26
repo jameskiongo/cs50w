@@ -1,0 +1,6 @@
+APIs
+flight{
+  "origin":"new york",
+  "destination": "london",
+  "duration": 432
+}
